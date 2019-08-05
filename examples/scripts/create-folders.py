@@ -14,7 +14,7 @@ if not os.path.exists('baselines'): os.mkdir('baselines')
 if not os.path.exists('volumetric_somae'): os.mkdir('volumetric_somae')
 
 
-output_directories = ['baselines/teasers', 'baselines/topological-thinnings', 'connectomes', 'distances', 'segmentations', 'skeletons', 'somae', 'surfaces', 'synapses', 'volumetric_somae/segmentations', 'widths']
+output_directories = ['baselines/teasers', 'baselines/topological-thinnings', 'connectomes', 'distances', 'segmentations', 'skeletons', 'somae', 'surfaces', 'synapses', 'volumetric_somae/segmentations', 'volumetric_somae/surfaces', 'widths']
 
 
 for output_directory in output_directories:
