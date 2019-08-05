@@ -102,3 +102,10 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+connectome/wiring.cpp
+.vscode/*
+isthmus/topological_thinning.cpp
+teaser/teaser.cpp
+*~
+.vscode
