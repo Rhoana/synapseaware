@@ -4,10 +4,10 @@ import struct
 
 
 import numpy as np
-from PIL import Image
 
 
 from synapseaware.data_structures import meta_data
+
 
 
 def GridSize(prefix):
@@ -19,14 +19,6 @@ def GridSize(prefix):
 def Resolution(prefix):
     # return the resolution for this prefix
     return meta_data.MetaData(prefix).Resolution()
-
-
-
-def ReadImage(filename):
-    # return the image corresponding to this file
-    im = np.array(Image.open(filename))
-
-    return im
 
 
 
