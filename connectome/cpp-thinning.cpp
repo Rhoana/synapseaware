@@ -181,7 +181,7 @@ static void NewSurfaceVoxel(long iv, long ix, long iy, long iz)
 
 
 
-static void RemoveSurfaceVoxel(ListElement *LE) 
+static void RemoveSurfaceVoxel(ListElement *LE)
 {
     ListElement *LE2;
     if (surface_voxels.first == LE) surface_voxels.first = LE->next;
@@ -200,7 +200,7 @@ static void RemoveSurfaceVoxel(ListElement *LE)
 
 
 
-static void CreatePointList(PointList *s) 
+static void CreatePointList(PointList *s)
 {
     s->head = NULL;
     s->tail = NULL;
@@ -209,7 +209,7 @@ static void CreatePointList(PointList *s)
 
 
 
-static void AddToList(PointList *s, Voxel e, ListElement *ptr) 
+static void AddToList(PointList *s, Voxel e, ListElement *ptr)
 {
     Cell *newcell = new Cell();
     newcell->v = e;
@@ -308,12 +308,12 @@ static void CollectSurfaceVoxels(void)
 
             long ii, ij, ik;
             IndexToIndices(neighbor_index, ii, ij, ik);
-            
+
             // skip the fake boundary elements
             if ((ii == 0) or (ii == grid_size[OR_X] - 1)) continue;
             if ((ij == 0) or (ij == grid_size[OR_Y] - 1)) continue;
             if ((ik == 0) or (ik == grid_size[OR_Z] - 1)) continue;
-            
+
             if (segment.find(neighbor_index) == segment.end()) {
                 // this location is a boundary so create a surface voxel and break
                 // cannot update it->second if it is synapse so need this test!!
@@ -337,8 +337,8 @@ static unsigned int Collect26Neighbors(long ix, long iy, long iz)
 {
     unsigned int neighbors = 0;
     long index = IndicesToIndex(ix, iy, iz);
-    
-    // some of these lookups will create a new entry but the region is 
+
+    // some of these lookups will create a new entry but the region is
     // shrinking so memory overhead is minimal
     for (long iv = 0; iv < 26; ++iv) {
         if (segment[index + n26_offsets[iv]]) neighbors |= long_mask[iv];
@@ -431,7 +431,7 @@ static long ThinningIterationStep(void)
                         long iu, iv, iw;
                         IndexToIndices(neighbor_index, iu, iv, iw);
                         NewSurfaceVoxel(neighbor_index, iu, iv, iw);
-                        
+
                         // convert to a surface point
                         segment[neighbor_index] = 2;
                     }
@@ -506,17 +506,20 @@ void CppSkeletonGeneration(const char *prefix, long label, const char *lookup_ta
     // create (and clear) the global variables
     segment = std::unordered_map<long, char>(10000000);
     // not needed here but for refinement so need to initialize anyway
-    synapses = std::unordered_set<long>(); 
+    synapses = std::unordered_set<long>();
     widths = std::unordered_map<long, float>(10000000);
 
+    // need to initialize first and last to NULL
+    surface_voxels.first = NULL;
+    surface_voxels.last = NULL;
+    
     // initialize all of the lookup tables
     InitializeLookupTables(lookup_table_directory);
 
     // populate the point clouds with segment voxels and anchor points
     CppPopulatePointCloud(prefix, "segmentations", label);
     CppPopulatePointCloud(prefix, "synapses", label);
-    CppPopulatePointCloud(prefix,  "somae", label);
-    
+
     // get the number of points
     long initial_points = segment.size();
     printf("Label %ld initial points: %ld\n", label, initial_points);
@@ -554,13 +557,13 @@ void CppSkeletonGeneration(const char *prefix, long label, const char *lookup_ta
     if (fwrite(&(grid_size[OR_X]), sizeof(long), 1, wfp) != 1) { fprintf(stderr, "Failed to write to %s\n", output_filename); exit(-1); }
     if (fwrite(&num, sizeof(long), 1, wfp) != 1) { fprintf(stderr, "Failed to write to %s\n", output_filename); exit(-1); }
 
-    // write the widths to file   
+    // write the widths to file
     char widths_filename[4096];
     sprintf(widths_filename, "widths/%s/%06ld.pts", prefix, label);
 
     FILE *width_fp = fopen(widths_filename, "wb");
     if (!width_fp) { fprintf(stderr, "Failed to write to %s\n", widths_filename); exit(-1); }
-    
+
     // write the number of elements
     if (fwrite(&(grid_size[OR_Z]), sizeof(long), 1, width_fp) != 1) { fprintf(stderr, "Failed to write to %s\n", widths_filename); exit(-1); }
     if (fwrite(&(grid_size[OR_Y]), sizeof(long), 1, width_fp) != 1) { fprintf(stderr, "Failed to write to %s\n", widths_filename); exit(-1); }
